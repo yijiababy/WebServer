@@ -525,10 +525,16 @@ AnalysisState HttpData::analysisRequest() {
     else
       filetype = MimeType::getMime(fileName_.substr(dot_pos));
 
+
     // echo test
     if (fileName_ == "hello") {
-      outBuffer_ =
-          "HTTP/1.1 200 OK\r\nContent-type: text/plain\r\n\r\nHello World";
+        string json_result = "{\"msg\":\"success\"}";
+        header += "Content-Type: application/json; charset=utf-8\r\n";
+        header += "Content-Length: " + to_string(json_result.size()) +  "\r\n";
+        header += "Server: LinYa's Web Server\r\n";
+        header += "\r\n";
+        outBuffer_ += header;
+        outBuffer_ += json_result;
       return ANALYSIS_SUCCESS;
     }
     if (fileName_ == "favicon.ico") {
@@ -574,7 +580,6 @@ AnalysisState HttpData::analysisRequest() {
     }
     char *src_addr = static_cast<char *>(mmapRet);
     outBuffer_ += string(src_addr, src_addr + sbuf.st_size);
-    ;
     munmap(mmapRet, sbuf.st_size);
     return ANALYSIS_SUCCESS;
   }
